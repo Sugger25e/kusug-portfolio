@@ -8,7 +8,7 @@ export const clients = [
     comment:
       'Thank you so much, bro, for this incredible custom loading animation! The mod is amazing and works perfectly. I can\'t wait to try it on the server. Absolutely 5 out of 5 perfect! 🤩',
     rating: 5,
-    images: ['https://media.discordapp.net/attachments/1409477369831489576/1411337580204658749/Screenshot_2025-08-30-22-09-35-698_com.mojang.minecraftpe.jpg?ex=68b44a0c&is=68b2f88c&hm=350ea76d662f4fe3f06d517835492bed255625f4c03ac0f07e2ce9bfad844aae&=&format=webp&width=1733&height=800'],
+    images: ['https://media.discordapp.net/attachments/1409477369831489576/1411337580204658749/Screenshot_2025-08-30-22-09-35-698_com.mojang.minecraftpe.jpg?ex=68b6ed0c&is=68b59b8c&hm=ad92a43c6f39671083d29e779ef6c81fcc14ef5340d0ca09e302264d32a48bd9&=&format=webp&width=1733&height=800'],
   },
   {
     name: 'Sweet Japan',
@@ -17,7 +17,7 @@ export const clients = [
       'Awesome work loved working with him! 5/5',
     rating: 5,
     images: [
-      'https://media.discordapp.net/attachments/1409002826927177828/1411735205848289332/image.png?ex=68b5bc5d&is=68b46add&hm=59af5022f946b53b1878e62a15adb4b2c1ca9de1b34d5fdb413774da8bdbc904&=&format=webp&quality=lossless&width=1510&height=668',
+      'https://media.discordapp.net/attachments/1409002826927177828/1411735205848289332/image.png?ex=68b70ddd&is=68b5bc5d&hm=5f502027cd98cd9a3015a387ef312a184146f13d6f7bde376bc50042c91da0de&=&format=webp&quality=lossless&width=1510&height=668',
     ],
   },
   {
