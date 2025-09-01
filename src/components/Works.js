@@ -16,9 +16,9 @@ const items = [
     title: 'Streakify Discord Bot [SOLD]',
     desc: 'A verified daily streak bot for your Discord server. Deprecated because it was already sold to a client.',
     tags: ['Scripting'],
-    img: 'https://media.discordapp.net/attachments/1369695003781365830/1412006039662104667/image.png?ex=68b6b899&is=68b56719&hm=cb7756aa5caf9a4d3e5d4036132a1a8bd89a4be7cdcbb6ec5c1b8a13fe371337&=&format=webp&quality=lossless&width=993&height=485',
-    link: 'https://top.gg/bot/1302220852921761854',
-    linkText: 'View in Top.GG',
+    img: 'https://media.discordapp.net/attachments/1369695003781365830/1412199060000997466/image.png?ex=68b76c5d&is=68b61add&hm=51e530d07e1524efc2ed35e3ef72862775b18b9dcd67fd070a325fe487cd71a1&=&format=webp&quality=lossless&width=1860&height=615',
+    link: 'https://streakify-web.vercel.app/',
+    linkText: 'View Website',
     ratio: '16 / 9',
   },
   {
