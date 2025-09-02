@@ -19,21 +19,7 @@ export const clients = [
     images: [
       'https://media.discordapp.net/attachments/1409002826927177828/1411735205848289332/image.png?ex=68b70ddd&is=68b5bc5d&hm=5f502027cd98cd9a3015a387ef312a184146f13d6f7bde376bc50042c91da0de&=&format=webp&quality=lossless&width=1510&height=668',
     ],
-  },
-  {
-    name: 'NovaRealm Team',
-    avatar: 'https://i.pravatar.cc/100?img=22',
-    comment:
-      'Textures and models look incredible in RTX. Asset sizes stayed lean which kept our worlds fast.',
-    rating: 5,
-  },
-  {
-    name: 'CubeCrafted',
-    avatar: 'https://i.pravatar.cc/100?img=15',
-    comment:
-      'Reliable and creative. They shipped UI, scripts, and models exactly to spec ahead of schedule.',
-    rating: 4,
-  },
+  }
 ];
 
 const StarRow = ({ rating = 5 }) => (

@@ -4,39 +4,47 @@ const items = [
   {
     title: 'Streak Up! Add-on',
     desc: 'Daily streak quests, an in-game shop, and more. Uses custom JSON UI and scripting for smooth and reliable progress.',
-    tags: ['JSON UI', 'Scripting', 'NPC Models'],
+    tags: ['User Interface', 'Scripting', 'NPC Models'],
     link: 'https://www.curseforge.com/minecraft-bedrock/addons/streaks',
     linkText: 'See on Curseforge',
     img: 'https://media.forgecdn.net/attachments/1281/519/banner-png.png',
     autoplay: true,
     autoplayInterval: 4000,
-    ratio: '16 / 9',
   },
   {
     title: 'Streakify Discord Bot [SOLD]',
     desc: 'A verified daily streak bot for your Discord server. Deprecated because it was already sold to a client.',
-    tags: ['Scripting'],
+    tags: ['Scripting', 'Web Page'],
     img: 'https://media.discordapp.net/attachments/1369695003781365830/1412199060000997466/image.png?ex=68b76c5d&is=68b61add&hm=51e530d07e1524efc2ed35e3ef72862775b18b9dcd67fd070a325fe487cd71a1&=&format=webp&quality=lossless&width=1860&height=615',
     link: 'https://streakify-web.vercel.app/',
     linkText: 'View Website',
-    ratio: '16 / 9',
   },
   {
-    title: 'PBR Texture Suite',
-    desc: 'Optimized textures with metallic/roughness maps for RTX worlds.',
-    tags: ['Texturing', 'PBR'],
-    // img: '/thumbnails/pbr-textures.png',
-    // link: 'https://example.com/pbr-textures',
-    ratio: '16 / 9',
+    title: "Mines Game",
+    desc: "A fully functional game in Minecraft Bedrock with the use of UI and Scripting.",
+    tags: ["Scripting", "User Interface", "Textures"],
+    img: 'https://media.discordapp.net/attachments/1370361716268990526/1377469221327601744/Screenshot_2025-05-08-22-22-35-596_com.mojang.minecraftpe.jpg?ex=68b7a3ae&is=68b6522e&hm=e5010e60c5b6c7405fdf8c514e185dcb1a2d169ae4f3c20bf2b0249f67d19038&=&format=webp&width=1733&height=800',
   },
   {
-    title: 'Low-poly Creature Set',
-    desc: 'Blockbench-modeled mobs with clean rigs and animations.',
-    tags: ['Modeling', 'Blockbench'],
-    // img: '/thumbnails/low-poly-creatures.png',
-    // link: 'https://example.com/low-poly-creatures',
-    ratio: '16 / 9',
+    title: 'Battlepass System',
+    desc: 'Supports percentage progress, with 3 different states.',
+    tags: ['User Interface', 'Scripting'],
+    img: 'https://media.discordapp.net/attachments/1406161189586604043/1406235734611857509/image.png?ex=68b77b55&is=68b629d5&hm=428c3e13f63d44b06475d7146bac9ab1d2cbbe1344963ee21958a1446c3ae1e1&=&format=webp&quality=lossless&width=1486&height=800' 
   },
+  {
+    title: 'Crate Spin',
+    desc: 'Includes spin animation, spin sound, and functions.',
+    tags: ['User Interface', 'Scripting'],
+    img: 'https://media.discordapp.net/attachments/1369695003781365830/1412366229770993686/image.png?ex=68b8080d&is=68b6b68d&hm=a715333dff325d7c36964cf75e16e4d1d4201b08b15030dba27f7d437459d15e&=&format=webp&quality=lossless&width=688&height=299',
+    link: 'https://www.youtube.com/watch?v=xlj3JA3ZX_Y',
+    linkText: 'Watch in YouTube'
+  },
+  {
+    title: 'Custom Main Menu',
+    desc: 'Made & customized especially for your server!',
+    img: 'https://media.discordapp.net/attachments/1402446863033958542/1406060586848092301/image.png?ex=68b780f7&is=68b62f77&hm=b239fe75fce863a64d543b40f019f3ec78d509f5f675ab00007d757e861885c9&=&format=webp&quality=lossless&width=1240&height=836',
+    tags: ['User Interface']
+  }
 ];
 
 function WorkThumb({ img, imgs, title, ratio = '16 / 9', autoplay = false, autoplayInterval = 4000 }) {
@@ -57,7 +65,6 @@ function WorkThumb({ img, imgs, title, ratio = '16 / 9', autoplay = false, autop
     setI((p) => (p - 1 + sources.length) % sources.length);
   };
 
-  // Autoplay with pause-on-hover (avoid capturing `next` in deps)
   useEffect(() => {
     if (!autoplay || !hasMany || paused) return;
     const id = setInterval(() => {
@@ -66,7 +73,6 @@ function WorkThumb({ img, imgs, title, ratio = '16 / 9', autoplay = false, autop
     return () => clearInterval(id);
   }, [autoplay, hasMany, paused, autoplayInterval, sources.length]);
 
-  // Touch swipe
   const onTouchStart = (e) => {
     const t = e.touches?.[0];
     if (t) touchRef.current = { x: t.clientX, y: t.clientY };
