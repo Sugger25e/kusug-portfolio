@@ -39,32 +39,26 @@ const Testimonials = () => {
   };
 
   const closeLightbox = () => {
-    // Play closing animation, then unmount
     setLightbox(prev => {
       if (!prev.open || prev.closing) return prev;
       return { ...prev, closing: true };
     });
-    // Match CSS animation duration
     const timeout = setTimeout(() => {
       setLightbox({ open: false, closing: false, src: '', alt: '' });
     }, 180);
-    // In case component unmounts early, clear timeout
     return () => clearTimeout(timeout);
   };
 
-  // Close on Escape and lock background scroll when open
   useEffect(() => {
     if (!lightbox.open) return;
     const onKey = (e) => { if (e.key === 'Escape') closeLightbox(); };
     window.addEventListener('keydown', onKey);
-    // Move focus to close button for accessibility
     closeBtnRef.current?.focus?.();
     return () => {
       window.removeEventListener('keydown', onKey);
     };
   }, [lightbox.open]);
 
-  // While lightbox is open or closing, hide custom overlay scrollbar without disabling page scroll
   useEffect(() => {
     const on = lightbox.open || lightbox.closing;
     if (on) document.body.classList.add('lightbox-open');
@@ -72,7 +66,6 @@ const Testimonials = () => {
     return () => document.body.classList.remove('lightbox-open');
   }, [lightbox.open, lightbox.closing]);
 
-  // Lock background scroll (wheel/touch/keys) while lightbox is visible (open or closing)
   useEffect(() => {
     const locking = lightbox.open || lightbox.closing;
     if (!locking) return;
