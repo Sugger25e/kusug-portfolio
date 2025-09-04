@@ -230,6 +230,15 @@ html.lightbox-open, body.lightbox-open { overscroll-behavior: contain; }
 #contact .tag-select .tag-option .checkbox { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 4px; background: #0f1113; border: 1px solid var(--gray-700); color: #a7ffb1; font-size: 13px; }
 #contact .tag-select .tag-option.selected .checkbox { background: #1c2335; border-color: #5865F2; }
 
+/* Contact image uploader */
+#contact .image-uploader { display: grid; gap: 0.5rem; }
+#contact .add-images-btn { align-self: start; }
+#contact .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+#contact .preview-item { position: relative; border-radius: 8px; overflow: hidden; background: #1113; border: 1px solid var(--gray-700); }
+#contact .preview-item img { width: 100%; height: 80px; object-fit: cover; display: block; }
+#contact .remove-btn { position: absolute; top: 1px; right: 1px; width: 24px; height: 24px; padding: 0; box-sizing: border-box; display: grid; place-items: center; border: none; border-radius: 9999px; background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; line-height: 1; font-weight: 600; cursor: pointer; z-index: 2; }
+#contact .remove-btn:hover { background: rgba(0,0,0,0.8); }
+
 
 @media (hover: hover) {
   /* Show track on hover near the right edge */

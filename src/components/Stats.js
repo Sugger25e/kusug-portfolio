@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { clients } from './Testimonials';
 // Fetch from external Express server
-const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
+//const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
+const API_BASE = 'http://localhost:5173'
 
 function useCountUp(target, duration = 1200, startOnVisibleRef) {
   const [value, setValue] = useState(0);

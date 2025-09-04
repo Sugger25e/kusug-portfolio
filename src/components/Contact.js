@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const TAG_OPTIONS = ['User Interface', 'Scripting', 'Discord Bot', 'Website'];
 
@@ -34,7 +35,6 @@ function TagSelect() {
   return (
     <div className={`tag-select ${open ? 'open' : ''}`} ref={ref}>
           <label htmlFor="tag">Tags <span className="req" aria-hidden="true">*</span></label>
-  {/* Hidden input for the existing submit script */}
   <input type="hidden" id="tag" name="tag" value={selected.join(', ')} />
       <button
         type="button"
@@ -85,8 +85,130 @@ const Contact = () => {
   const [copied, setCopied] = useState(false);
   const [statusText, setStatusText] = useState('');
   const [sending, setSending] = useState(false);
-  const [formKey, setFormKey] = useState(0); // remount TagSelect to clear after success
-  const [method, setMethod] = useState('discord'); // 'discord' | 'email'
+  const [formKey, setFormKey] = useState(0); 
+  const [method, setMethod] = useState('discord');
+  const [images, setImages] = useState([]);
+  const objectUrlsRef = useRef(new Set());
+  const fileInputRef = useRef(null);
+  const [lightbox, setLightbox] = useState({ open: false, closing: false, src: '', alt: '' });
+  const closeBtnRef = useRef(null);
+
+  const MAX_FILES = 5;
+  const MAX_SIZE = 5 * 1024 * 1024;
+
+  const addImages = (fileList) => {
+    const list = Array.isArray(fileList) ? fileList : Array.from(fileList || []);
+    if (!list.length) return;
+    const picked = [];
+    for (const f of list) {
+      if (!f) continue;
+      const isImage = (f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(f.name || '');
+      if (!isImage) continue;
+      picked.push(f);
+    }
+    if (!picked.length) return;
+    setImages((prev) => {
+      const remaining = Math.max(0, MAX_FILES - prev.length);
+      if (!remaining) {
+        setStatusText(`You can upload up to ${MAX_FILES} images.`);
+        return prev;
+      }
+      const toAdd = picked.slice(0, remaining).filter((f) => {
+        if (f.size > MAX_SIZE) {
+          setStatusText(`Some images exceed 5MB and were skipped.`);
+          return false;
+        }
+        return true;
+      }).map((f) => {
+        const url = URL.createObjectURL(f);
+        objectUrlsRef.current.add(url);
+        return { file: f, url };
+      });
+      return toAdd.length ? [...prev, ...toAdd] : prev;
+    });
+  };
+
+  const onFilesPicked = (e) => {
+    const list = e.target && e.target.files ? Array.from(e.target.files) : [];
+    addImages(list);
+    e.target.value = '';
+  };
+
+  const removeImage = (idx) => {
+    setImages((prev) => {
+      const copy = [...prev];
+      const [removed] = copy.splice(idx, 1);
+      if (removed && removed.url) {
+        URL.revokeObjectURL(removed.url);
+        objectUrlsRef.current.delete(removed.url);
+      }
+      return copy;
+    });
+  };
+
+  const openLightbox = (src, alt) => {
+    setLightbox({ open: true, closing: false, src, alt });
+  };
+
+  const closeLightbox = useCallback(() => {
+    setLightbox(prev => {
+      if (!prev.open || prev.closing) return prev;
+      return { ...prev, closing: true };
+    });
+    const timeout = setTimeout(() => {
+      setLightbox({ open: false, closing: false, src: '', alt: '' });
+    }, 180);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    const urlSet = objectUrlsRef.current;
+    return () => {
+      for (const url of urlSet) {
+        URL.revokeObjectURL(url);
+      }
+      urlSet.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!lightbox.open) return;
+    const onKey = (e) => { if (e.key === 'Escape') closeLightbox(); };
+    window.addEventListener('keydown', onKey);
+  closeBtnRef.current?.focus?.();
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightbox.open, closeLightbox]);
+
+  useEffect(() => {
+    const on = lightbox.open || lightbox.closing;
+    if (on) document.body.classList.add('lightbox-open');
+    else document.body.classList.remove('lightbox-open');
+    return () => document.body.classList.remove('lightbox-open');
+  }, [lightbox.open, lightbox.closing]);
+
+  useEffect(() => {
+    const locking = lightbox.open || lightbox.closing;
+    if (!locking) return;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    const preventScroll = (e) => { e.preventDefault(); };
+    const preventKeys = (e) => {
+      const keys = ['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Spacebar'];
+      if (keys.includes(e.key)) e.preventDefault();
+    };
+    window.addEventListener('wheel', preventScroll, { passive: false });
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+    window.addEventListener('keydown', preventKeys);
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      window.removeEventListener('wheel', preventScroll, { passive: false });
+      window.removeEventListener('touchmove', preventScroll, { passive: false });
+      window.removeEventListener('keydown', preventKeys);
+    };
+  }, [lightbox.open, lightbox.closing]);
 
   const copyUsername = async () => {
     const text = discordUsername;
@@ -94,7 +216,6 @@ const Contact = () => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for older browsers
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.setAttribute('readonly', '');
@@ -113,8 +234,9 @@ const Contact = () => {
     }
   };
 
-  // API base: env override; localhost backend in dev; relative path in prod
-  const API_BASE = 'https://kusug-portfolio-backend.vercel.app'
+//  const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
+  const API_BASE = 'http://localhost:5173'
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,18 +270,37 @@ const Contact = () => {
 
     try {
       const url = API_BASE ? `${API_BASE}/api/contact` : '/api/contact';
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const hasImages = images && images.length > 0;
+      let res;
+      if (hasImages) {
+        const formData = new FormData();
+        formData.append('name', payload.name);
+        formData.append('tag', payload.tag);
+        formData.append('subject', payload.subject);
+        formData.append('message', payload.message);
+        images.forEach((it) => formData.append('images', it.file));
+        res = await fetch(url, { method: 'POST', body: formData });
+      } else {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setStatusText('Message sent! I will get back to you soon.');
   form.reset();
-        // Clear TagSelect by remounting
   setFormKey((k) => k + 1);
   setMethod('discord');
+  images.forEach((it) => {
+    if (it?.url) {
+      URL.revokeObjectURL(it.url);
+      objectUrlsRef.current.delete(it.url);
+    }
+  });
+  objectUrlsRef.current.clear();
+  setImages([]);
       } else {
         setStatusText(data.error || 'Failed to send. Please try again later.');
       }
@@ -218,6 +359,37 @@ const Contact = () => {
                 <label htmlFor="message">Message <span className="req" aria-hidden="true">*</span></label>
               <textarea id="message" name="message" required maxLength="1900" rows="6"></textarea>
             </div>
+            <div className="image-uploader">
+              <label htmlFor="images">Images <span className="muted">(up to {MAX_FILES}, 5MB each)</span></label>
+              <input
+                id="images"
+                ref={fileInputRef}
+                name="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={onFilesPicked}
+                style={{ display: 'none' }}
+              />
+              <button
+                type="button"
+                className="btn btn-outline add-images-btn"
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                disabled={images.length >= MAX_FILES}
+              >
+                {images.length >= MAX_FILES ? 'Image limit reached' : 'Add images'}
+              </button>
+              {images.length > 0 && (
+                <div className="preview-grid">
+                  {images.map((it, idx) => (
+                    <div className="preview-item" key={idx} onClick={() => openLightbox(it.url, `Attachment ${idx+1}`)}>
+                      <img src={it.url} alt={`selected-${idx+1}`} />
+                      <button type="button" className="remove-btn" aria-label={`Remove image ${idx+1}`} onClick={(e) => { e.stopPropagation(); removeImage(idx); }}>×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button type="submit" disabled={sending}>{sending ? 'Sending…' : 'Send'}</button>
             <p id="contactStatus" aria-live="polite">{statusText}</p>
           </form>
@@ -243,18 +415,27 @@ const Contact = () => {
         </div>
       </div>
 
-      <style>
-        {`
-          .contact-wrapper { display: grid; gap: 2rem; grid-template-columns: 1fr 1fr; align-items: start; }
-          @media (max-width: 800px) { .contact-wrapper { grid-template-columns: 1fr; } }
-          form > div { margin-bottom: 0.75rem; }
-          input, textarea, select { width: 100%; padding: 0.5rem; }
-          button { padding: 0.6rem 1rem; }
-          #contactStatus { margin-top: 0.5rem; }
-        `}
-      </style>
+      {(lightbox.open || lightbox.closing) && createPortal(
+        (
+          <div className={`lightbox${lightbox.closing ? ' closing' : ''}`} onClick={closeLightbox} role="dialog" aria-modal="true" aria-label="Image viewer">
+            <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+              <button
+                ref={closeBtnRef}
+                className="lightbox-close"
+                type="button"
+                onClick={closeLightbox}
+                aria-label="Close"
+                title="Close"
+              >
+                ×
+              </button>
+              <img className={`lightbox-img${lightbox.closing ? ' closing' : ''}`} src={lightbox.src} alt={lightbox.alt || 'Zoomed image'} />
+            </div>
+          </div>
+        ),
+        document.body
+      )}
 
-  {/* Removed inline script in favor of React onSubmit handler */}
     </section>
   );
 };
