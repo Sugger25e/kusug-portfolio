@@ -14,8 +14,8 @@ export default function usePreventBodySelectOnDrag() {
     };
 
     const onDown = (e) => {
-      if (e.button !== 0) return; // only left button
-      if (isTextual(e.target)) return; // allow normal selection on text
+      if (e.button !== 0) return; 
+      if (isTextual(e.target)) return;
       dragging = true;
       document.body.classList.add('no-select-drag');
     };

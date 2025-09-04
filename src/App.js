@@ -9,6 +9,7 @@ import useRevealOnScroll from './hooks/useRevealOnScroll';
 import OverlayScrollbar from './components/OverlayScrollbar';
 import usePreventBodySelectOnDrag from './hooks/usePreventBodySelectOnDrag';
 import React from 'react';
+import logo from './assets/logo.png';
 
 function App() {
   useRevealOnScroll([]);
@@ -19,7 +20,9 @@ function App() {
     <div className="site">
       <nav className="nav">
         <div className="container nav-inner">
-          <a href="#top" className="brand" onClick={closeNav}>KuSug</a>
+          <a href="#top" className="brand" onClick={closeNav} aria-label="KuSug Home">
+            <img src={logo} alt="KuSug" className="brand-logo" />
+          </a>
           <button
             className="nav-toggle"
             aria-label="Toggle menu"

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { clients } from './Testimonials';
-// Fetch from external Express server
 const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
 //const API_BASE = 'http://localhost:5173'
 
@@ -20,7 +19,6 @@ function useCountUp(target, duration = 1200, startOnVisibleRef) {
       startRef.current = performance.now();
       const tick = (now) => {
         const t = Math.min(1, (now - startRef.current) / duration);
-        // easeOutCubic
         const eased = 1 - Math.pow(1 - t, 3);
         setValue(Math.floor(target * eased));
         if (t < 1) rafRef.current = requestAnimationFrame(tick);
@@ -29,7 +27,6 @@ function useCountUp(target, duration = 1200, startOnVisibleRef) {
     };
 
     if (startOnVisibleRef?.current) {
-      // If an observer toggles a class on the wrapper, start when visible
       const el = startOnVisibleRef.current;
       const io = new IntersectionObserver((entries) => {
         entries.forEach((e) => {
