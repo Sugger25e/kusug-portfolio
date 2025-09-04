@@ -234,8 +234,8 @@ const Contact = () => {
     }
   };
 
-//  const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
-  const API_BASE = 'http://localhost:5173'
+  const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
+//  const API_BASE = 'http://localhost:5173'
 
 
   const handleSubmit = async (e) => {
