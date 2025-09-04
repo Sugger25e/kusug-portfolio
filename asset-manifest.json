@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/kusug-portfolio/static/css/main.3b1ef45d.css",
-    "main.js": "/kusug-portfolio/static/js/main.e5b5c95c.js",
+    "main.css": "/kusug-portfolio/static/css/main.15491de9.css",
+    "main.js": "/kusug-portfolio/static/js/main.c1c339dc.js",
     "static/js/453.7f1595f6.chunk.js": "/kusug-portfolio/static/js/453.7f1595f6.chunk.js",
     "static/media/sugger_av.png": "/kusug-portfolio/static/media/sugger_av.094df119979f4341edbd.png",
     "index.html": "/kusug-portfolio/index.html",
-    "main.3b1ef45d.css.map": "/kusug-portfolio/static/css/main.3b1ef45d.css.map",
-    "main.e5b5c95c.js.map": "/kusug-portfolio/static/js/main.e5b5c95c.js.map",
+    "main.15491de9.css.map": "/kusug-portfolio/static/css/main.15491de9.css.map",
+    "main.c1c339dc.js.map": "/kusug-portfolio/static/js/main.c1c339dc.js.map",
     "453.7f1595f6.chunk.js.map": "/kusug-portfolio/static/js/453.7f1595f6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3b1ef45d.css",
-    "static/js/main.e5b5c95c.js"
+    "static/css/main.15491de9.css",
+    "static/js/main.c1c339dc.js"
   ]
 }
