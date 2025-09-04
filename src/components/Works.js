@@ -1,4 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import item2 from '../assets/works/streakify.png';
+import item3 from '../assets/works/casino.jpg';
+import item4 from '../assets/works/battlepass.png';
+import item5 from '../assets/works/spin.png';
+import item6 from '../assets/works/menu.png';
 
 const items = [
   {
@@ -15,7 +20,7 @@ const items = [
     title: 'Streakify Discord Bot [SOLD]',
     desc: 'A verified daily streak bot for your Discord server. Deprecated because it was already sold to a client.',
     tags: ['Scripting', 'Web Page'],
-    img: 'https://media.discordapp.net/attachments/1369695003781365830/1412199060000997466/image.png?ex=68b76c5d&is=68b61add&hm=51e530d07e1524efc2ed35e3ef72862775b18b9dcd67fd070a325fe487cd71a1&=&format=webp&quality=lossless&width=1860&height=615',
+    img: item2,
     link: 'https://streakify-web.vercel.app/',
     linkText: 'View Website',
   },
@@ -23,26 +28,26 @@ const items = [
     title: "Mines Game",
     desc: "A fully functional game in Minecraft Bedrock with the use of UI and Scripting.",
     tags: ["Scripting", "User Interface", "Textures"],
-    img: 'https://media.discordapp.net/attachments/1370361716268990526/1377469221327601744/Screenshot_2025-05-08-22-22-35-596_com.mojang.minecraftpe.jpg?ex=68b7a3ae&is=68b6522e&hm=e5010e60c5b6c7405fdf8c514e185dcb1a2d169ae4f3c20bf2b0249f67d19038&=&format=webp&width=1733&height=800',
+    img: item3
   },
   {
     title: 'Battlepass System',
     desc: 'Supports percentage progress, with 3 different states.',
     tags: ['User Interface', 'Scripting'],
-    img: 'https://media.discordapp.net/attachments/1406161189586604043/1406235734611857509/image.png?ex=68b77b55&is=68b629d5&hm=428c3e13f63d44b06475d7146bac9ab1d2cbbe1344963ee21958a1446c3ae1e1&=&format=webp&quality=lossless&width=1486&height=800' 
+    img: item4
   },
   {
     title: 'Crate Spin',
     desc: 'Includes spin animation, spin sound, and functions.',
     tags: ['User Interface', 'Scripting'],
-    img: 'https://media.discordapp.net/attachments/1369695003781365830/1412366229770993686/image.png?ex=68b8080d&is=68b6b68d&hm=a715333dff325d7c36964cf75e16e4d1d4201b08b15030dba27f7d437459d15e&=&format=webp&quality=lossless&width=688&height=299',
+    img: item5,
     link: 'https://www.youtube.com/watch?v=xlj3JA3ZX_Y',
     linkText: 'Watch in YouTube'
   },
   {
     title: 'Custom Main Menu',
     desc: 'Made & customized especially for your server!',
-    img: 'https://media.discordapp.net/attachments/1402446863033958542/1406060586848092301/image.png?ex=68b780f7&is=68b62f77&hm=b239fe75fce863a64d543b40f019f3ec78d509f5f675ab00007d757e861885c9&=&format=webp&quality=lossless&width=1240&height=836',
+    img: item6,
     tags: ['User Interface']
   }
 ];
