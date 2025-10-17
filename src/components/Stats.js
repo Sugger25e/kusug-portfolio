@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
 //const API_BASE = 'http://localhost:5173'
 
@@ -51,7 +51,14 @@ function StatCard({ label, value, loading }) {
   );
 }
 
-const Stats = ({ modId }) => {
+const Stats = ({ modIds, modId }) => {
+  const ids = useMemo(() => {
+    const list = (Array.isArray(modIds) && modIds.length ? modIds : (modId ? [modId] : []))
+      .filter((v) => v !== undefined && v !== null && `${v}`.trim() !== '')
+      .map((v) => `${v}`.trim());
+    return Array.from(new Set(list));
+  }, [modIds, modId]);
+
   const [downloads, setDownloads] = useState(0);
   const [loading, setLoading] = useState(true);
   const [serverMsg, setServerMsg] = useState('');
@@ -59,55 +66,67 @@ const Stats = ({ modId }) => {
 
   useEffect(() => {
     let cancelled = false;
+
+    async function fetchDownloadCount(id) {
+      const url = `${API_BASE}/api/curseforge/${id}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${id}`);
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if (ct.includes('application/json')) {
+        const j = await res.json();
+        return Number(j.downloadCount || 0);
+      } else {
+        const txt = await res.text();
+        throw new Error(txt || `Non-JSON response for ${id}`);
+      }
+    }
+
     async function run() {
+      if (!ids.length) {
+        if (!cancelled) {
+          setDownloads(0);
+          setLoading(false);
+          setServerMsg('');
+        }
+        return;
+      }
+
       try {
         setLoading(true);
-        let dl = 0;
-  const url = `${API_BASE}/api/curseforge/${modId}`;
-        try {
-          const r1 = await fetch(url);
-          if (r1.ok) {
-            const ct = (r1.headers.get('content-type') || '').toLowerCase();
-            if (ct.includes('application/json')) {
-              const j = await r1.json();
-              dl = Number(j.downloadCount || 0);
-            } else {
-              const txt = await r1.text();
-              setServerMsg(txt);
-              dl = 0;
-            }
+        setServerMsg('');
+
+        const results = await Promise.allSettled(ids.map(fetchDownloadCount));
+        let total = 0;
+        let firstErr = '';
+
+        results.forEach((r) => {
+          if (r.status === 'fulfilled') {
+            total += Number(r.value || 0);
+          } else if (!firstErr) {
+            firstErr = r.reason?.message || String(r.reason || '');
           }
-        } catch {}
-        if (!dl) {
-          try {
-            const r2 = await fetch(url);
-            if (r2.ok) {
-              const ct2 = (r2.headers.get('content-type') || '').toLowerCase();
-              if (ct2.includes('application/json')) {
-                const j2 = await r2.json();
-                dl = Number(j2.downloadCount || 0);
-              } else {
-                const txt2 = await r2.text();
-                setServerMsg(txt2);
-                dl = 0;
-              }
-            }
-          } catch {}
+        });
+
+        if (!cancelled) {
+          setDownloads(total);
+          if (firstErr) setServerMsg(firstErr);
         }
-        if (!cancelled) setDownloads(dl || 0);
       } catch (e) {
-        if (!cancelled) setDownloads(0);
+        if (!cancelled) {
+          setDownloads(0);
+          setServerMsg(e?.message || 'Failed to fetch downloads.');
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
-    if (modId) run();
+
+    run();
     return () => { cancelled = true; };
-  }, [modId]);
+  }, [ids]);
 
   const animatedDownloads = useCountUp(downloads, 1200, wrapperRef);
-
-  const projectsMade = 3;
+  const projectsMade = ids.length;
   const animatedProjects = useCountUp(projectsMade, 900, wrapperRef);
 
   return (
@@ -118,11 +137,11 @@ const Stats = ({ modId }) => {
           <StatCard label="Projects made" value={animatedProjects} loading={false} />
           <StatCard label="Total downloads" value={animatedDownloads} loading={loading} />
         </div>
-    {serverMsg ? (
+        {serverMsg ? (
           <p className="muted" style={{ marginTop: 8 }}>Server: {serverMsg}</p>
-    ) : (animatedDownloads === 0) && (
+        ) : (animatedDownloads === 0 && !loading) && (
           <p className="muted" style={{ marginTop: 8 }}>
-      If downloads show 0, ensure your backend is running and .env has REACT_APP_STATS_API (and REACT_APP_CF_MOD_ID), then restart the dev server.
+            If downloads show 0, ensure your backend is running and .env has REACT_APP_STATS_API (and IDs), then restart the dev server.
           </p>
         )}
       </div>

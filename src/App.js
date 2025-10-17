@@ -47,7 +47,7 @@ function App() {
         <div className="reveal"><Hero /></div>
         <section className="reveal"><About /></section>
   <Works />
-  <section className="reveal"><Stats modId={1247173} /></section>
+  <section className="reveal"><Stats modIds={['1247173', '1363130', '1362854']} /></section>
         <section className="reveal"><Testimonials /></section>
   <section className="reveal"><Contact /></section>
       </main>
