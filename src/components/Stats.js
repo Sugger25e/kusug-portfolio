@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { clients } from './Testimonials';
 const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
 //const API_BASE = 'http://localhost:5173'
 
@@ -108,7 +107,7 @@ const Stats = ({ modId }) => {
 
   const animatedDownloads = useCountUp(downloads, 1200, wrapperRef);
 
-  const projectsMade = Array.isArray(clients) ? clients.length : 0;
+  const projectsMade = 3;
   const animatedProjects = useCountUp(projectsMade, 900, wrapperRef);
 
   return (

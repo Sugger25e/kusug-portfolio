@@ -3,7 +3,6 @@ import item2 from '../assets/works/streakify.png';
 import item3 from '../assets/works/casino.jpg';
 import item4 from '../assets/works/battlepass.png';
 import item5 from '../assets/works/spin.png';
-import item6 from '../assets/works/menu.png';
 
 const items = [
   {
@@ -12,7 +11,23 @@ const items = [
     tags: ['User Interface', 'Scripting', 'NPC Models'],
     link: 'https://www.curseforge.com/minecraft-bedrock/addons/streaks',
     linkText: 'See on Curseforge',
-    img: 'https://media.forgecdn.net/attachments/1281/519/banner-png.png',
+    imgs: [
+      'https://media.forgecdn.net/attachments/1281/519/banner-png.png',
+      'https://media.forgecdn.net/attachments/description/1247173/description_0df47b92-5db5-447c-b3d1-4233b19ad98a.png'
+    ],
+    autoplay: true,
+    autoplayInterval: 4000,
+  },
+  {
+    title: 'Advanced Compass Add-on',
+    desc: 'This add-on transforms the standard compass into a powerful tracking device for survival explorers.',
+    tags: ['User Interface', 'Scripting'],
+    link: 'https://www.curseforge.com/minecraft-bedrock/addons/advanced-compass',
+    linkText: 'See on Curseforge',
+    imgs: [
+      'https://media.forgecdn.net/attachments/1354/136/untitled-design-png.png',
+      'https://media.forgecdn.net/attachments/description/1363130/description_4bb72b2e-4fd8-474f-a650-e8c0f9f58ea8.png'
+    ],
     autoplay: true,
     autoplayInterval: 4000,
   },
@@ -43,12 +58,6 @@ const items = [
     img: item5,
     link: 'https://www.youtube.com/watch?v=xlj3JA3ZX_Y',
     linkText: 'Watch in YouTube'
-  },
-  {
-    title: 'Custom Main Menu',
-    desc: 'Made & customized especially for your server!',
-    img: item6,
-    tags: ['User Interface']
   }
 ];
 
