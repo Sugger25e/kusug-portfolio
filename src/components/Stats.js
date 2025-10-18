@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 const API_BASE = 'https://kusug-portfolio-backend.vercel.app';
-//const API_BASE = 'http://localhost:5173'
 
 function useCountUp(target, duration = 1200, startOnVisibleRef) {
   const [value, setValue] = useState(0);
