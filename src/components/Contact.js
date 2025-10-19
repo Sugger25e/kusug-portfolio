@@ -96,6 +96,8 @@ const Contact = () => {
   const [recaptchaToken, setRecaptchaToken] = useState('');
   const [recaptchaError, setRecaptchaError] = useState('');
   const recaptchaRef = useRef(null);
+  const recaptchaContainerRef = useRef(null);
+  const [recaptchaHighlight, setRecaptchaHighlight] = useState(false);
 
   const RECAPTCHA_SITE_KEY = '6LdCJ-8rAAAAAF1XAG6nqaXTP6jcZqz2uMlqLdUB';
 
@@ -247,25 +249,26 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (sending) return;
-    setSending(true);
-    setStatusText('Sending...');
   const form = e.currentTarget; 
     const fd = new FormData(form);
       if (!RECAPTCHA_SITE_KEY) {
         setStatusText('reCAPTCHA is not configured. Please try again later.');
-        setSending(false);
         return;
       }
       if (!recaptchaToken) {
-        setRecaptchaError('Please confirm you are not a robot.');
-        setStatusText('Please complete the reCAPTCHA.');
-        setSending(false);
+        const msg = 'Please verify the captcha before submitting.';
+        setRecaptchaError(msg);
+        setStatusText(msg);
+        try {
+          recaptchaContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch {}
+        setRecaptchaHighlight(true);
+        setTimeout(() => setRecaptchaHighlight(false), 1800);
         return;
       }
       const tagsValue = String(fd.get('tag') || '').trim();
       if (!tagsValue) {
         setStatusText('Please select at least one tag.');
-        setSending(false);
         return;
       }
       let nameField = '';
@@ -285,6 +288,8 @@ const Contact = () => {
         message: String(fd.get('message') || '')
       };
 
+    setSending(true);
+    setStatusText('Sending...');
     try {
       const url = API_BASE ? `${API_BASE}/api/contact` : '/api/contact';
       const hasImages = images && images.length > 0;
@@ -411,7 +416,10 @@ const Contact = () => {
                 </div>
               )}
             </div>
-            <div style={{ margin: '12px 0' }}>
+            <div
+              ref={recaptchaContainerRef}
+              style={{ margin: '12px 0', outline: recaptchaHighlight ? '2px solid #d33' : 'none', borderRadius: 6, padding: recaptchaHighlight ? 6 : 0 }}
+            >
               {RECAPTCHA_SITE_KEY ? (
                 <ReCAPTCHA
                   ref={recaptchaRef}
@@ -423,9 +431,9 @@ const Contact = () => {
               ) : (
                 <p className="muted" style={{ color: '#a33' }}>reCAPTCHA not configured.</p>
               )}
-              {recaptchaError && <p style={{ color: '#a33', marginTop: 6 }}>{recaptchaError}</p>}
+              {recaptchaError && <p style={{ color: '#a33', marginTop: 6 }} aria-live="assertive">{recaptchaError}</p>}
             </div>
-            <button type="submit" disabled={sending || !recaptchaToken || !RECAPTCHA_SITE_KEY}>{sending ? 'Sending…' : 'Send'}</button>
+            <button type="submit" disabled={sending || !RECAPTCHA_SITE_KEY}>{sending ? 'Sending…' : 'Send'}</button>
             <p id="contactStatus" aria-live="polite">{statusText}</p>
           </form>
         </div>
