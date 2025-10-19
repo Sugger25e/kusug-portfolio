@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { createPortal } from 'react-dom';
 
 const TAG_OPTIONS = ['User Interface', 'Scripting', 'Discord Bot', 'Website'];
@@ -92,6 +93,11 @@ const Contact = () => {
   const fileInputRef = useRef(null);
   const [lightbox, setLightbox] = useState({ open: false, closing: false, src: '', alt: '' });
   const closeBtnRef = useRef(null);
+  const [recaptchaToken, setRecaptchaToken] = useState('');
+  const [recaptchaError, setRecaptchaError] = useState('');
+  const recaptchaRef = useRef(null);
+
+  const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '';
 
   const MAX_FILES = 5;
   const MAX_SIZE = 5 * 1024 * 1024;
@@ -245,6 +251,17 @@ const Contact = () => {
     setStatusText('Sending...');
   const form = e.currentTarget; 
     const fd = new FormData(form);
+      if (!RECAPTCHA_SITE_KEY) {
+        setStatusText('reCAPTCHA is not configured. Please try again later.');
+        setSending(false);
+        return;
+      }
+      if (!recaptchaToken) {
+        setRecaptchaError('Please confirm you are not a robot.');
+        setStatusText('Please complete the reCAPTCHA.');
+        setSending(false);
+        return;
+      }
       const tagsValue = String(fd.get('tag') || '').trim();
       if (!tagsValue) {
         setStatusText('Please select at least one tag.');
@@ -278,13 +295,14 @@ const Contact = () => {
         formData.append('tag', payload.tag);
         formData.append('subject', payload.subject);
         formData.append('message', payload.message);
+        formData.append('recaptchaToken', recaptchaToken);
         images.forEach((it) => formData.append('images', it.file));
         res = await fetch(url, { method: 'POST', body: formData });
       } else {
         res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ ...payload, recaptchaToken })
         });
       }
       const data = await res.json().catch(() => ({}));
@@ -293,6 +311,9 @@ const Contact = () => {
   form.reset();
   setFormKey((k) => k + 1);
   setMethod('discord');
+  setRecaptchaToken('');
+  setRecaptchaError('');
+  try { recaptchaRef.current?.reset?.(); } catch {}
   images.forEach((it) => {
     if (it?.url) {
       URL.revokeObjectURL(it.url);
@@ -390,7 +411,21 @@ const Contact = () => {
                 </div>
               )}
             </div>
-            <button type="submit" disabled={sending}>{sending ? 'Sending…' : 'Send'}</button>
+            <div style={{ margin: '12px 0' }}>
+              {RECAPTCHA_SITE_KEY ? (
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={RECAPTCHA_SITE_KEY}
+                  onChange={(tok) => { setRecaptchaToken(tok || ''); setRecaptchaError(''); }}
+                  onExpired={() => { setRecaptchaToken(''); setRecaptchaError('reCAPTCHA expired. Please try again.'); }}
+                  theme="light"
+                />
+              ) : (
+                <p className="muted" style={{ color: '#a33' }}>reCAPTCHA not configured.</p>
+              )}
+              {recaptchaError && <p style={{ color: '#a33', marginTop: 6 }}>{recaptchaError}</p>}
+            </div>
+            <button type="submit" disabled={sending || !recaptchaToken || !RECAPTCHA_SITE_KEY}>{sending ? 'Sending…' : 'Send'}</button>
             <p id="contactStatus" aria-live="polite">{statusText}</p>
           </form>
         </div>
