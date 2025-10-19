@@ -33,9 +33,15 @@ img, video, canvas { max-width: 100%; height: auto; }
 .brand-logo { display: block; height: 32px; width: auto; object-fit: contain; }
 @media (max-width: 760px) { .brand-logo { height: 26px; } }
 .brand-text { color: #fff; font-weight: 800; line-height: 1; display: inline-flex; align-items: center; letter-spacing: 0.3px; }
-.nav-links { display: flex; align-items: center; gap: 18px; }
-.nav-links a { color: var(--text); text-decoration: none; opacity: 0.85; }
+.nav-links { position: relative; display: flex; align-items: center; gap: 18px; }
+.nav-links a { color: var(--text); text-decoration: none; opacity: 0.85; position: relative; padding-bottom: 8px; transition: color .25s ease; }
 .nav-links a:hover { color: var(--orange); }
+/* Keep active link orange on hover too */
+.nav-links a.active:hover { color: var(--orange); }
+/* Single slider dot that moves under active link (desktop) */
+.nav-links .active-dot { position: absolute; bottom: 0px; width: 6px; height: 6px; border-radius: 999px; background: var(--orange); box-shadow: 0 0 8px rgba(255,153,0,0.5); left: 0; transition: transform .35s cubic-bezier(.22,.61,.36,1); pointer-events: none; will-change: transform; }
+/* Maintain desktop text color; hover still works */
+.nav-links a.active { color: var(--text); }
 
 /* Hamburger toggle (hidden on desktop) */
 .nav-toggle { display: none; background: transparent; border: 1px solid var(--gray-700); border-radius: 8px; padding: 6px 8px; color: var(--text); cursor: pointer; }
@@ -46,6 +52,12 @@ img, video, canvas { max-width: 100%; height: auto; }
   .nav-toggle { display: inline-block; }
   .nav-links { position: absolute; right: 4%; top: calc(100% + 8px); background: #17191c; border: 1px solid var(--gray-700); border-radius: 10px; padding: 10px; display: none; flex-direction: column; min-width: 160px; box-shadow: 0 12px 28px rgba(0,0,0,0.35); }
   .nav-links.open { display: flex; }
+  /* Hide sliding dot on mobile; use color transition for active link */
+  .nav-links .active-dot { display: none; }
+  .nav-links a { transition: color .25s ease; }
+  /* On mobile, keep either active or click-target link orange with smooth transition */
+  .nav-links a.active,
+  .nav-links a.target-active { color: var(--orange); }
 }
 
 /* Hero */
