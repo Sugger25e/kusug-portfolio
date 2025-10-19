@@ -97,7 +97,7 @@ const Contact = () => {
   const [recaptchaError, setRecaptchaError] = useState('');
   const recaptchaRef = useRef(null);
 
-  const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '';
+  const RECAPTCHA_SITE_KEY = '6LdCJ-8rAAAAAF1XAG6nqaXTP6jcZqz2uMlqLdUB';
 
   const MAX_FILES = 5;
   const MAX_SIZE = 5 * 1024 * 1024;
