@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import HCaptcha from '@hcaptcha/react-hcaptcha';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { createPortal } from 'react-dom';
 
 const TAG_OPTIONS = ['User Interface', 'Scripting', 'Discord Bot', 'Website'];
@@ -93,13 +93,13 @@ const Contact = () => {
   const fileInputRef = useRef(null);
   const [lightbox, setLightbox] = useState({ open: false, closing: false, src: '', alt: '' });
   const closeBtnRef = useRef(null);
-  const [hcaptchaToken, setHcaptchaToken] = useState('');
-  const [hcaptchaError, setHcaptchaError] = useState('');
-  const hcaptchaRef = useRef(null);
-  const hcaptchaContainerRef = useRef(null);
-  const [hcaptchaHighlight, setHcaptchaHighlight] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState('');
+  const [recaptchaError, setRecaptchaError] = useState('');
+  const recaptchaRef = useRef(null);
+  const recaptchaContainerRef = useRef(null);
+  const [recaptchaHighlight, setRecaptchaHighlight] = useState(false);
 
-  const HCAPTCHA_SITE_KEY = process.env.REACT_APP_HCAPTCHA_SITE_KEY || '6a149c34-ac8a-47f4-9648-a110af0af4f2';
+  const RECAPTCHA_SITE_KEY = '6LdCJ-8rAAAAAF1XAG6nqaXTP6jcZqz2uMlqLdUB';
 
   const MAX_FILES = 5;
   const MAX_SIZE = 5 * 1024 * 1024;
@@ -251,19 +251,19 @@ const Contact = () => {
     if (sending) return;
   const form = e.currentTarget; 
     const fd = new FormData(form);
-      if (!HCAPTCHA_SITE_KEY) {
-        setStatusText('hCaptcha is not configured. Please try again later.');
+      if (!RECAPTCHA_SITE_KEY) {
+        setStatusText('reCAPTCHA is not configured. Please try again later.');
         return;
       }
-      if (!hcaptchaToken) {
+      if (!recaptchaToken) {
         const msg = 'Please verify the captcha before submitting.';
-        setHcaptchaError(msg);
+        setRecaptchaError(msg);
         setStatusText(msg);
         try {
-          hcaptchaContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          recaptchaContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } catch {}
-        setHcaptchaHighlight(true);
-        setTimeout(() => setHcaptchaHighlight(false), 1800);
+        setRecaptchaHighlight(true);
+        setTimeout(() => setRecaptchaHighlight(false), 1800);
         return;
       }
       const tagsValue = String(fd.get('tag') || '').trim();
@@ -300,14 +300,14 @@ const Contact = () => {
         formData.append('tag', payload.tag);
         formData.append('subject', payload.subject);
         formData.append('message', payload.message);
-        formData.append('hcaptchaToken', hcaptchaToken);
+        formData.append('recaptchaToken', recaptchaToken);
         images.forEach((it) => formData.append('images', it.file));
         res = await fetch(url, { method: 'POST', body: formData });
       } else {
         res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, hcaptchaToken })
+          body: JSON.stringify({ ...payload, recaptchaToken })
         });
       }
       const data = await res.json().catch(() => ({}));
@@ -316,9 +316,9 @@ const Contact = () => {
   form.reset();
   setFormKey((k) => k + 1);
   setMethod('discord');
-  setHcaptchaToken('');
-  setHcaptchaError('');
-  try { hcaptchaRef.current?.resetCaptcha?.(); } catch {}
+  setRecaptchaToken('');
+  setRecaptchaError('');
+  try { recaptchaRef.current?.reset?.(); } catch {}
   images.forEach((it) => {
     if (it?.url) {
       URL.revokeObjectURL(it.url);
@@ -417,23 +417,23 @@ const Contact = () => {
               )}
             </div>
             <div
-              ref={hcaptchaContainerRef}
-              style={{ margin: '12px 0', outline: hcaptchaHighlight ? '2px solid #d33' : 'none', borderRadius: 6, padding: hcaptchaHighlight ? 6 : 0 }}
+              ref={recaptchaContainerRef}
+              style={{ margin: '12px 0', outline: recaptchaHighlight ? '2px solid #d33' : 'none', borderRadius: 6, padding: recaptchaHighlight ? 6 : 0 }}
             >
-              {HCAPTCHA_SITE_KEY ? (
-                <HCaptcha
-                  ref={hcaptchaRef}
-                  sitekey={HCAPTCHA_SITE_KEY}
-                  onVerify={(tok) => { setHcaptchaToken(tok || ''); setHcaptchaError(''); }}
-                  onExpire={() => { setHcaptchaToken(''); setHcaptchaError('hCaptcha expired. Please try again.'); }}
+              {RECAPTCHA_SITE_KEY ? (
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={RECAPTCHA_SITE_KEY}
+                  onChange={(tok) => { setRecaptchaToken(tok || ''); setRecaptchaError(''); }}
+                  onExpired={() => { setRecaptchaToken(''); setRecaptchaError('reCAPTCHA expired. Please try again.'); }}
                   theme="light"
                 />
               ) : (
-                <p className="muted" style={{ color: '#a33' }}>hCaptcha not configured.</p>
+                <p className="muted" style={{ color: '#a33' }}>reCAPTCHA not configured.</p>
               )}
-              {hcaptchaError && <p style={{ color: '#a33', marginTop: 6 }} aria-live="assertive">{hcaptchaError}</p>}
+              {recaptchaError && <p style={{ color: '#a33', marginTop: 6 }} aria-live="assertive">{recaptchaError}</p>}
             </div>
-            <button type="submit" disabled={sending || !HCAPTCHA_SITE_KEY}>{sending ? 'Sending…' : 'Send'}</button>
+            <button type="submit" disabled={sending || !RECAPTCHA_SITE_KEY}>{sending ? 'Sending…' : 'Send'}</button>
             <p id="contactStatus" aria-live="polite">{statusText}</p>
           </form>
         </div>
